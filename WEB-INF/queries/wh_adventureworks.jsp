@@ -26,5 +26,4 @@
       </jp:mondrianQuery>
 
       <c:set var="title01" scope="session">
-        Query AdventureWorks Data Warehouse using Mondrian OLAP
       </c:set>

@@ -1,0 +1,92 @@
+/* assets/css/custom-dashboard.css */
+
+/* Chart containers */
+.revenuegrowth-chart,
+.user-visitsCharts,
+.selling-product {
+  position: relative;
+  height: 300px;
+}
+
+/* Product cards */
+.top-product {
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  transition: all 0.3s ease;
+  border: 1px solid #f0f0f0;
+}
+
+.top-product:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #7366ff;
+}
+
+/* Progress bars */
+.progress {
+  height: 6px;
+  background-color: #f5f5f5;
+}
+
+.progress-bar {
+  border-radius: 4px;
+}
+
+/* Tables */
+.custom-scrollbar {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Status badges */
+.txt-primary {
+  color: #7366ff !important;
+}
+
+.txt-secondary {
+  color: #ffc107 !important;
+}
+
+/* Drill-down buttons */
+.btn-outline-light-2x {
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  color: white;
+  font-weight: 600;
+}
+
+.btn-outline-light-2x:hover {
+  border-color: white;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .revenuegrowth-chart,
+  .user-visitsCharts,
+  .selling-product {
+    height: 250px;
+  }
+
+  .common-space {
+    flex-direction: column;
+    gap: 10px !important;
+  }
+}
