@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<Schema name="dwoadw2">
+    <Cube name="AnalisisFilm" defaultMeasure="Total Pendapatan">
+        <Table name="fakta_pendapatan"/>
+
+        <Dimension name="Film" foreignKey="film_id">
+            <Hierarchy hasAll="true" allMemberName="All Films" primaryKey="film_id">
+                <Table name="film"/>
+                <Level name="Kategori" column="kategori"/>
+                <Level name="Judul" column="judul"/>
+            </Hierarchy>
+        </Dimension>
+
+        <Dimension name="Customer" foreignKey="customer_id">
+            <Hierarchy hasAll="true" allMemberName="All Customers" primaryKey="customer_id">
+                <Table name="customer"/>
+                <Level name="Nama Customer" column="nama"/>
+            </Hierarchy>
+        </Dimension>
+
+        <Measure name="Jumlah Film" column="film_id" aggregator="count" formatString="#,###"/>
+        <Measure name="Total Pendapatan" column="amount" aggregator="sum" formatString="#,###.00"/>
+    </Cube>
+</Schema>
