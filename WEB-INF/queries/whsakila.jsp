@@ -1,17 +1,20 @@
 <%@ page session="true" contentType="text/html; charset=ISO-8859-1" %>
-  <%@ taglib uri="http://www.tonbeller.com/jpivot" prefix="jp" %>
-    <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
+<%@ taglib uri="http://www.tonbeller.com/jpivot" prefix="jp" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 
-      <jp:mondrianQuery id="query01" jdbcDriver="com.mysql.cj.jdbc.Driver"
-        jdbcUrl="jdbc:mysql://localhost:3306/wh_adventureworks?user=root&password="
-        catalogUri="/WEB-INF/queries/dwsakila.xml">
 
-        select {[Measures].[Amount],[Measures].[Lama Pinjam]} ON COLUMNS,
-        {([Store],[Time].[All Times],[Customer],[Film].[All Films])} ON ROWS
-        from [Jual]
+<jp:mondrianQuery id="query01" jdbcDriver="com.mysql.jdbc.Driver" 
+jdbcUrl="jdbc:mysql://localhost/whsakila2021?user=root&password=" catalogUri="/WEB-INF/queries/dwsakila.xml">
 
-      </jp:mondrianQuery>
+select {[Measures].[Amount],[Measures].[Lama Pinjam]} ON COLUMNS,
+  {([Store],[Time].[All Times],[Customer],[Film].[All Films])} ON ROWS
+from [Jual]
 
-      <c:set var="title01" scope="session">
-        Query DWSAKILA using Mondrian OLAP
-      </c:set>
+
+</jp:mondrianQuery>
+
+
+
+
+
+<c:set var="title01" scope="session">Query WHSAKILA using Mondrian OLAP</c:set>

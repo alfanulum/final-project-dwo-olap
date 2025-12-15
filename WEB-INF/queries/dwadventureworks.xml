@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<Schema name="dwadventureworks">
+
+  <!-- ===================== -->
+  <!-- CUBE: Sales -->
+  <!-- ===================== -->
+  <Cube name="Sales" defaultMeasure="Total Sales">
+
+    <!-- FACT TABLE -->
+    <Table name="factsales"/>
+
+    <!-- ===================== -->
+    <!-- DIMENSION: Time -->
+    <!-- ===================== -->
+    <Dimension name="Time" foreignKey="TimeKey">
+      <Hierarchy hasAll="true" allMemberName="All Time" primaryKey="TimeKey">
+        <Table name="dimtime"/>
+        <Level name="Year" column="Year" type="Numeric" uniqueMembers="true"
+               levelType="TimeYears"/>
+        <Level name="Quarter" column="Quarter" type="Numeric"
+               levelType="TimeQuarters"/>
+        <Level name="Month" column="Month" type="Numeric"
+               levelType="TimeMonths"/>
+        <Level name="Day" column="Day" type="Numeric"
+               levelType="TimeDays"/>
+      </Hierarchy>
+    </Dimension>
+
+    <!-- ===================== -->
+    <!-- DIMENSION: Product -->
+    <!-- ===================== -->
+    <Dimension name="Product" foreignKey="ProductKey">
+      <Hierarchy hasAll="true" allMemberName="All Products" primaryKey="ProductKey">
+        <Table name="dimproduct"/>
+        <Level name="Category" column="Category"/>
+        <Level name="Subcategory" column="Subcategory"/>
+        <Level name="Product Name" column="ProductName"/>
+      </Hierarchy>
+    </Dimension>
+
+    <!-- ===================== -->
+    <!-- DIMENSION: Customer -->
+    <!-- ===================== -->
+    <Dimension name="Customer" foreignKey="CustomerKey">
+      <Hierarchy hasAll="true" allMemberName="All Customers" primaryKey="CustomerKey">
+        <Table name="dimcustomer"/>
+        <Level name="Gender" column="Gender"/>
+        <Level name="City" column="City"/>
+        <Level name="Customer Name" column="FirstName"/>
+      </Hierarchy>
+    </Dimension>
+
+    <!-- ===================== -->
+    <!-- DIMENSION: Geography -->
+    <!-- ===================== -->
+    <Dimension name="Geography" foreignKey="GeographyKey">
+      <Hierarchy hasAll="true" allMemberName="All Regions" primaryKey="GeographyKey">
+        <Table name="dimgeography"/>
+        <Level name="Country" column="Country"/>
+        <Level name="State" column="StateProvince"/>
+        <Level name="City" column="City"/>
+      </Hierarchy>
+    </Dimension>
+
+    <!-- ===================== -->
+    <!-- DIMENSION: Sales Person -->
+    <!-- ===================== -->
+    <Dimension name="Sales Person" foreignKey="SalesPersonKey">
+      <Hierarchy hasAll="true" allMemberName="All Sales Persons" primaryKey="SalesPersonKey">
+        <Table name="dimsalesperson"/>
+        <Level name="Territory" column="TerritoryName"/>
+        <Level name="Sales Person Name" column="FirstName"/>
+      </Hierarchy>
+    </Dimension>
+
+    <!-- ===================== -->
+    <!-- MEASURES -->
+    <!-- ===================== -->
+    <Measure name="Order Quantity"
+             column="OrderQty"
+             aggregator="sum"
+             formatString="#,###"/>
+
+    <Measure name="Total Sales"
+             column="LineTotal"
+             aggregator="sum"
+             formatString="#,###.00"/>
+
+    <Measure name="Total Due"
+             column="TotalDue"
+             aggregator="sum"
+             formatString="#,###.00"/>
+
+    <Measure name="Average Unit Price"
+             column="UnitPrice"
+             aggregator="avg"
+             formatString="#,###.00"/>
+
+    <Measure name="Sales Count"
+             column="SalesKey"
+             aggregator="count"
+             formatString="#,###"/>
+
+  </Cube>
+
+</Schema>
