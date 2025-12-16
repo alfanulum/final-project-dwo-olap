@@ -3,6 +3,10 @@ require_once "config/database.php";
 
 $error = "";
 
+// Buat koneksi PDO
+$database = new Database();
+$conn = $database->getConnection();
+
 // Jika sudah login (cookie ada)
 if (isset($_COOKIE['login_token'])) {
   header("Location: index.php");
@@ -11,24 +15,27 @@ if (isset($_COOKIE['login_token'])) {
 
 if (isset($_POST['login'])) {
 
-  $username = mysqli_real_escape_string($conn, $_POST['username']);
+  $username = $_POST['username'];
   $password = hash('sha256', $_POST['password']);
 
-  $query = mysqli_query($conn, "
-        SELECT * FROM users
-        WHERE UserName='$username'
-        AND UserPassword='$password'
-    ");
+  $sql = "SELECT * FROM users 
+          WHERE UserName = :username 
+          AND UserPassword = :password";
 
-  if (mysqli_num_rows($query) == 1) {
-    $user = mysqli_fetch_assoc($query);
+  $stmt = $conn->prepare($sql);
+  $stmt->bindParam(':username', $username);
+  $stmt->bindParam(':password', $password);
+  $stmt->execute();
+
+  if ($stmt->rowCount() === 1) {
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     // token sederhana (untuk tugas)
     $token = hash('sha256', $user['UserKey'] . $user['UserName']);
 
     // set cookie (1 hari)
-    setcookie("login_token", $token, time() + (86400), "/", "", false, true);
-    setcookie("user_name", $user['UserName'], time() + (86400), "/", "", false, true);
+    setcookie("login_token", $token, time() + 86400, "/", "", false, true);
+    setcookie("user_name", $user['UserName'], time() + 86400, "/", "", false, true);
 
     header("Location: index.php");
     exit;
@@ -37,6 +44,7 @@ if (isset($_POST['login'])) {
   }
 }
 ?>
+
 
 
 <!DOCTYPE html>

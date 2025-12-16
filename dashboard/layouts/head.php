@@ -63,8 +63,6 @@ if ($token !== $validToken) {
   <link rel="stylesheet" type="text/css" href="./assets/css/vendors/icofont.css">
   <!-- Themify icon-->
   <link rel="stylesheet" type="text/css" href="./assets/css/vendors/themify.css">
-  <!-- Flag icon-->
-  <link rel="stylesheet" type="text/css" href="./assets/css/vendors/flag-icon.css">
   <!-- Feather icon-->
   <link rel="stylesheet" type="text/css" href="./assets/css/vendors/feather-icon.css">
   <!-- Plugins css start-->
@@ -72,7 +70,6 @@ if ($token !== $validToken) {
   <link rel="stylesheet" type="text/css" href="./assets/css/vendors/slick-theme.css">
   <link rel="stylesheet" type="text/css" href="./assets/css/vendors/scrollbar.css">
   <link rel="stylesheet" type="text/css" href="./assets/css/vendors/animate.css">
-  <link rel="stylesheet" type="text/css" href="./assets/css/vendors/echart.css">
   <link rel="stylesheet" type="text/css" href="./assets/css/vendors/date-picker.css">
   <!-- Plugins css Ends-->
   <!-- Bootstrap css-->

@@ -1,7 +1,6 @@
 /*! -----------------------------------------------------------------------------------
 
     Template Name: Riho Admin
-    Template URI: https://admin.pixelstrap.net/riho/template/
     Description: This is Admin theme
     Author: Pixelstrap
     Author URI: https://themeforest.net/user/pixelstrap
@@ -12793,7 +12792,6 @@ textarea {
   background-image: url(../images/switch/square-gray.png);
 }
 .default-square .form-switch .form-check-input:checked {
-  background-image: url(https://admin.pixelstrap.net/riho/assets/images/switch/square.svg);
 }
 
 /**=====================

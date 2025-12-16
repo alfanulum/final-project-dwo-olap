@@ -30,36 +30,16 @@
         </li>
         <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav"
             href="index.php">
-            <svg class="stroke-icon">
-              <use href="https://admin.pixelstrap.net/riho/assets/svg/icon-sprite.svg#stroke-file"></use>
-            </svg>
-            <svg class="fill-icon">
-              <use href="https://admin.pixelstrap.net/riho/assets/svg/icon-sprite.svg#fill-file"></use>
-            </svg><span>Sales Overview</span></a></li>
+            <span>Sales Overview</span></a></li>
         <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav"
             href="file-manager.html">
-            <svg class="stroke-icon">
-              <use href="https://admin.pixelstrap.net/riho/assets/svg/icon-sprite.svg#stroke-file"></use>
-            </svg>
-            <svg class="fill-icon">
-              <use href="https://admin.pixelstrap.net/riho/assets/svg/icon-sprite.svg#fill-file"></use>
-            </svg><span>Product Analysis,</span></a></li>
+            <span>Product Analysis,</span></a></li>
         <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav"
             href="file-manager.html">
-            <svg class="stroke-icon">
-              <use href="https://admin.pixelstrap.net/riho/assets/svg/icon-sprite.svg#stroke-file"></use>
-            </svg>
-            <svg class="fill-icon">
-              <use href="https://admin.pixelstrap.net/riho/assets/svg/icon-sprite.svg#fill-file"></use>
-            </svg><span>Customer Geo</span></a></li>
+            <span>Customer Geo</span></a></li>
         <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav"
             href="olap.php">
-            <svg class="stroke-icon">
-              <use href="https://admin.pixelstrap.net/riho/assets/svg/icon-sprite.svg#stroke-file"></use>
-            </svg>
-            <svg class="fill-icon">
-              <use href="https://admin.pixelstrap.net/riho/assets/svg/icon-sprite.svg#fill-file"></use>
-            </svg><span>OLAP</span></a></li>
+            <span>OLAP</span></a></li>
       </ul>
       <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
     </div>

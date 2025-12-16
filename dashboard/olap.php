@@ -13,9 +13,8 @@
             <div class="col-6">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="index-2.html">
-                    <svg class="stroke-icon">
-                      <use href="https://admin.pixelstrap.net/riho/assets/svg/icon-sprite.svg#stroke-home"></use>
-                    </svg></a></li>
+                    <!-- Stroke Icon -->
+                </li>
                 <li class="breadcrumb-item">Dashboard</li>
                 <li class="breadcrumb-item active">OLAP</li>
               </ol>
