@@ -131,45 +131,60 @@ foreach ($monthlyFreq as $row) {
   <?php include 'layouts/sidebar.php'; ?>
 
   <div class="page-body">
-    <div class="container mt-4">
+    <div class="container-fluid">
 
-      <h3 id="chartTitle">Total Penjualan Tahunan</h3>
-      <p class="text-muted" id="chartSubtitle">
-        Berdasarkan wilayah dan produk di AdventureWorks selama 5 tahun terakhir
-      </p>
+      <!-- Modern Hero Section -->
+      <div class="page-hero">
+        <h3>Sales Overview</h3>
+        <p>Comprehensive analytics and insights for your business performance</p>
+      </div>
 
-      <div class="card shadow-sm">
-        <div class="card-body">
-
-          <button id="btnBack"
-            class="btn btn-sm btn-secondary mb-3 d-none">
-            ← Kembali ke Tahunan
-          </button>
-
-          <canvas id="chartCanvas" height="120"></canvas>
-
+      <!-- Chart Section 1 -->
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h4 id="chartTitle">Total Penjualan Tahunan</h4>
+              <p class="text-muted mb-0" id="chartSubtitle">
+                Berdasarkan wilayah dan produk di AdventureWorks selama 5 tahun terakhir
+              </p>
+            </div>
+            <div class="card-body">
+              <button id="btnBack" class="btn btn-sm btn-secondary mb-3 d-none">
+                <i class="fas fa-arrow-left"></i> Kembali ke Tahunan
+              </button>
+              <canvas id="chartCanvas" height="100"></canvas>
+            </div>
+          </div>
         </div>
       </div>
 
-      <h3 class="mt-5">Distribusi Frekuensi Pembelian Pelanggan</h3>
-      <p class="text-muted">
-        Berdasarkan jumlah pelanggan yang melakukan pembelian
-        selama 12 bulan terakhir
-      </p>
-
-      <div class="card shadow-sm">
-        <div class="card-body">
-          <canvas id="frequencyChart" height="120"></canvas>
+      <!-- Chart Section 2 -->
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h4>Distribusi Frekuensi Pembelian Pelanggan</h4>
+              <p class="text-muted mb-0">
+                Berdasarkan jumlah pelanggan yang melakukan pembelian selama 12 bulan terakhir
+              </p>
+            </div>
+            <div class="card-body">
+              <canvas id="frequencyChart" height="100"></canvas>
+            </div>
+          </div>
         </div>
       </div>
-
 
     </div>
   </div>
+
+  <?php include 'layouts/footer.php'; ?>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<?php include 'layouts/tail.php'; ?>
 
+<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
@@ -189,11 +204,8 @@ foreach ($monthlyFreq as $row) {
   };
 
   function renderYearly() {
-
-    document.getElementById('chartTitle').innerText =
-      'Total Penjualan Tahunan';
-    document.getElementById('chartSubtitle').innerText =
-      'Klik titik tahun untuk melihat detail bulanan';
+    document.getElementById('chartTitle').innerText = 'Total Penjualan Tahunan';
+    document.getElementById('chartSubtitle').innerText = 'Klik titik tahun untuk melihat detail bulanan';
     document.getElementById('btnBack').classList.add('d-none');
 
     if (chart) chart.destroy();
@@ -203,6 +215,8 @@ foreach ($monthlyFreq as $row) {
       data: yearlyData,
       options: {
         animation: baseAnimation,
+        responsive: true,
+        maintainAspectRatio: true,
         animations: {
           y: {
             from: 0
@@ -210,28 +224,30 @@ foreach ($monthlyFreq as $row) {
         },
         plugins: {
           legend: {
-            position: 'bottom'
+            position: 'bottom',
+            labels: {
+              padding: 15,
+              usePointStyle: true
+            }
           },
           tooltip: {
             callbacks: {
-              label: ctx => 'Rp ' + ctx.raw.toLocaleString()
+              label: ctx => 'Rp ' + ctx.raw.toLocaleString('id-ID')
             }
           }
         },
         scales: {
           y: {
             ticks: {
-              callback: v => 'Rp ' + v.toLocaleString()
+              callback: v => 'Rp ' + v.toLocaleString('id-ID')
             }
           }
         },
         onClick: (evt, elements) => {
           if (!elements.length) return;
-
           const el = elements[0];
           const year = yearlyData.labels[el.index];
           const territory = yearlyData.datasets[el.datasetIndex].label;
-
           loadMonthly(year, territory);
         }
       }
@@ -241,15 +257,11 @@ foreach ($monthlyFreq as $row) {
   }
 
   function loadMonthly(year, territory) {
-
     fetch(`?ajax=monthly&year=${year}&territory=${territory}`)
       .then(res => res.json())
       .then(res => {
-
-        document.getElementById('chartTitle').innerText =
-          'Detail Penjualan Bulanan';
-        document.getElementById('chartSubtitle').innerText =
-          `${territory} - ${year}`;
+        document.getElementById('chartTitle').innerText = 'Detail Penjualan Bulanan';
+        document.getElementById('chartSubtitle').innerText = `${territory} - ${year}`;
         document.getElementById('btnBack').classList.remove('d-none');
 
         if (chart) chart.destroy();
@@ -260,27 +272,35 @@ foreach ($monthlyFreq as $row) {
             labels: res.labels,
             datasets: [{
               label: 'Total Penjualan',
-              data: res.data
+              data: res.data,
+              backgroundColor: 'rgba(13, 148, 136, 0.8)',
+              borderColor: 'rgba(13, 148, 136, 1)',
+              borderWidth: 1
             }]
           },
           options: {
             animation: baseAnimation,
+            responsive: true,
+            maintainAspectRatio: true,
             animations: {
               y: {
                 from: 0
               }
             },
             plugins: {
+              legend: {
+                display: false
+              },
               tooltip: {
                 callbacks: {
-                  label: ctx => 'Rp ' + ctx.raw.toLocaleString()
+                  label: ctx => 'Rp ' + ctx.raw.toLocaleString('id-ID')
                 }
               }
             },
             scales: {
               y: {
                 ticks: {
-                  callback: v => 'Rp ' + v.toLocaleString()
+                  callback: v => 'Rp ' + v.toLocaleString('id-ID')
                 }
               }
             }
@@ -310,7 +330,15 @@ foreach ($monthlyFreq as $row) {
         label: 'Jumlah Pelanggan',
         data: <?= json_encode($customerCounts); ?>,
         tension: 0.4,
-        fill: true
+        fill: true,
+        backgroundColor: 'rgba(13, 148, 136, 0.1)',
+        borderColor: 'rgba(13, 148, 136, 1)',
+        borderWidth: 2,
+        pointBackgroundColor: 'rgba(13, 148, 136, 1)',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        pointRadius: 4,
+        pointHoverRadius: 6
       }]
     },
     options: {
@@ -318,14 +346,19 @@ foreach ($monthlyFreq as $row) {
         duration: 800,
         easing: 'easeOutQuart'
       },
+      responsive: true,
+      maintainAspectRatio: true,
       plugins: {
         legend: {
-          position: 'bottom'
+          position: 'bottom',
+          labels: {
+            padding: 15,
+            usePointStyle: true
+          }
         },
         tooltip: {
           callbacks: {
-            label: ctx =>
-              ctx.raw.toLocaleString() + ' pelanggan'
+            label: ctx => ctx.raw.toLocaleString('id-ID') + ' pelanggan'
           }
         }
       },
@@ -350,7 +383,3 @@ foreach ($monthlyFreq as $row) {
     }
   });
 </script>
-
-
-<?php include 'layouts/footer.php'; ?>
-<?php include 'layouts/tail.php'; ?>

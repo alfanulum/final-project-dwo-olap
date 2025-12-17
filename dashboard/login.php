@@ -44,72 +44,81 @@ if (isset($_POST['login'])) {
   }
 }
 ?>
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8">
-  <title>Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Dashboard</title>
 
-  <!-- (CSS ASLI TIDAK DIUBAH) -->
-  <link rel="stylesheet" href="./assets/css/vendors/bootstrap.css">
-  <link rel="stylesheet" href="./assets/css/style.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
 <body>
-  <div class="container-fluid p-0">
-    <div class="row m-0">
-      <div class="col-12 p-0">
-        <div class="login-card login-dark">
-          <div>
-            <div class="login-main">
-              <form class="theme-form" method="POST">
-                <h4>Sign in to account</h4>
-                <p>Enter username & password</p>
-
-                <?php if ($error): ?>
-                  <div class="alert alert-danger">
-                    <?= $error ?>
-                  </div>
-                <?php endif; ?>
-
-                <div class="form-group">
-                  <label class="col-form-label">Username</label>
-                  <input class="form-control"
-                    type="text"
-                    name="username"
-                    required
-                    placeholder="admin">
-                </div>
-
-                <div class="form-group">
-                  <label class="col-form-label">Password</label>
-                  <div class="form-input position-relative">
-                    <input class="form-control"
-                      type="password"
-                      name="password"
-                      required
-                      placeholder="********">
-                  </div>
-                </div>
-
-                <div class="form-group mb-0 text-end mt-3">
-                  <button class="btn btn-primary w-100"
-                    type="submit"
-                    name="login">
-                    Sign in
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
+  <div class="login-card">
+    <div class="login-main">
+      <div style="text-align: center; margin-bottom: 32px;">
+        <div class="login-brand">
+          <i class="fas fa-chart-line"></i>
         </div>
+        <h4>Welcome Back!</h4>
+        <p>Sign in to access your dashboard</p>
+      </div>
+
+      <form method="POST">
+        <?php if ($error): ?>
+          <div class="alert alert-danger">
+            <i class="fas fa-exclamation-circle"></i> <?= $error ?>
+          </div>
+        <?php endif; ?>
+
+        <div class="form-group">
+          <label>Username</label>
+          <input class="form-control"
+            type="text"
+            name="username"
+            required
+            placeholder="Enter your username"
+            autofocus>
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <input class="form-control"
+            type="password"
+            name="password"
+            required
+            placeholder="Enter your password">
+        </div>
+
+        <div class="form-group mb-0">
+          <button class="btn btn-primary w-100"
+            type="submit"
+            name="login">
+            <i class="fas fa-sign-in-alt"></i> Sign In
+          </button>
+        </div>
+      </form>
+
+      <div style="text-align: center; margin-top: 24px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
+        <p style="font-size: 13px; color: #6b7280; margin: 0;">
+          © 2024 AdventureWorks Dashboard
+        </p>
       </div>
     </div>
   </div>
+
+  <script src="assets/js/modern-dashboard.js"></script>
 </body>
 
 </html>
