@@ -123,6 +123,54 @@ foreach ($monthlyFreq as $row) {
   $customerCounts[] = (int)$row['TotalCustomers'];
 }
 
+/* =========================================================
+   PERBANDINGAN PENJUALAN BULANAN BERDASARKAN GENDER
+   (TAHUN TERAKHIR)
+   ========================================================= */
+$sql = "
+SELECT
+  dt.Month,
+  dt.MonthName,
+  dc.Gender,
+  SUM(fs.LineTotal) AS TotalSales
+FROM factsales fs
+JOIN dimtime dt ON fs.TimeKey = dt.TimeKey
+JOIN dimcustomer dc ON fs.CustomerKey = dc.CustomerKey
+WHERE dt.Year = (SELECT MAX(Year) FROM dimtime)
+GROUP BY dt.Month, dt.MonthName, dc.Gender
+ORDER BY dt.Month ASC
+";
+
+$stmt = $conn->prepare($sql);
+$stmt->execute();
+$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+/* =========================================================
+   FORMAT DATA UNTUK CHART.JS
+   ========================================================= */
+$months = [];
+$male = [];
+$female = [];
+
+foreach ($data as $row) {
+  if (!in_array($row['MonthName'], $months)) {
+    $months[] = $row['MonthName'];
+  }
+
+  if (strtolower($row['Gender']) === 'male') {
+    $male[$row['MonthName']] = round($row['TotalSales'], 2);
+  } elseif (strtolower($row['Gender']) === 'female') {
+    $female[$row['MonthName']] = round($row['TotalSales'], 2);
+  }
+}
+
+$maleData = [];
+$femaleData = [];
+
+foreach ($months as $m) {
+  $maleData[] = $male[$m] ?? 0;
+  $femaleData[] = $female[$m] ?? 0;
+}
 ?>
 
 <?php include 'layouts/head.php'; ?>
@@ -175,10 +223,24 @@ foreach ($monthlyFreq as $row) {
           </div>
         </div>
       </div>
-
+      <!-- Chart Section 3 -->
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h4>Perbandingan Penjualan Bulanan</h4>
+              <p class="text-muted mb-0">
+                Berdasarkan Gender Customer (1 Tahun Terakhir)
+              </p>
+            </div>
+            <div class="card-body">
+              <canvas id="genderSalesChart" height="100"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-
   <?php include 'layouts/footer.php'; ?>
 </div>
 
@@ -371,6 +433,71 @@ foreach ($monthlyFreq as $row) {
           title: {
             display: true,
             text: 'Jumlah Pelanggan'
+          }
+        },
+        x: {
+          title: {
+            display: true,
+            text: 'Bulan'
+          }
+        }
+      }
+    }
+  });
+  // js chart 3 
+
+  const genderCtx = document.getElementById('genderSalesChart');
+
+  new Chart(genderCtx, {
+    type: 'line',
+    data: {
+      labels: <?= json_encode($months); ?>,
+      datasets: [{
+          label: 'Male',
+          data: <?= json_encode($maleData); ?>,
+          tension: 0.4,
+          borderWidth: 2,
+          borderColor: 'rgba(59, 130, 246, 1)',
+          backgroundColor: 'rgba(59, 130, 246, 0.15)',
+          fill: true,
+          pointRadius: 4,
+          pointHoverRadius: 6
+        },
+        {
+          label: 'Female',
+          data: <?= json_encode($femaleData); ?>,
+          tension: 0.4,
+          borderWidth: 2,
+          borderColor: 'rgba(236, 72, 153, 1)',
+          backgroundColor: 'rgba(236, 72, 153, 0.15)',
+          fill: true,
+          pointRadius: 4,
+          pointHoverRadius: 6
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: {
+          position: 'bottom'
+        },
+        tooltip: {
+          callbacks: {
+            label: ctx =>
+              ctx.dataset.label + ': Rp ' + ctx.raw.toLocaleString('id-ID')
+          }
+        }
+      },
+      scales: {
+        y: {
+          ticks: {
+            callback: v => 'Rp ' + v.toLocaleString('id-ID')
+          },
+          title: {
+            display: true,
+            text: 'Total Penjualan'
           }
         },
         x: {
