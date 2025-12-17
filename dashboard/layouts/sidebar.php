@@ -31,7 +31,7 @@
         </li>
 
         <li class="sidebar-list">
-          <a class="sidebar-link sidebar-title link-nav" href="customer-geo.php">
+          <a class="sidebar-link sidebar-title link-nav" href="geo.php">
             <i class="fas fa-map-marked-alt"></i>
             <span>Customer Geo</span>
           </a>
