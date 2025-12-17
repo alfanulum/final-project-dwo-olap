@@ -8,9 +8,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
   <!-- Logo -->
   <div class="logo-wrapper">
     <a href="index.php">Dashboard</a>
-    <button class="toggle-sidebar" id="toggleSidebar">
-      <i class="fas fa-bars"></i>
-    </button>
   </div>
 
   <!-- Sidebar Main -->
