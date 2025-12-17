@@ -50,6 +50,49 @@ $stmt = $conn->prepare($sql);
 $stmt->execute($params);
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+/* ==============================
+   DATA GENDER (TAMBAHAN)
+   ============================== */
+$genderSql = "
+SELECT 
+    dg.TerritoryName AS country,
+    dc.Gender,
+    COUNT(DISTINCT fs.CustomerKey) AS total_customers,
+    SUM(fs.LineTotal) AS total_sales
+FROM factsales fs
+JOIN dimgeography dg ON fs.GeographyKey = dg.GeographyKey
+JOIN dimcustomer dc ON fs.CustomerKey = dc.CustomerKey
+";
+
+$genderParams = [];
+if ($selectedYear !== null) {
+    $genderSql .= " WHERE MOD(fs.CustomerKey, 4) = ?";
+    $genderParams[] = $selectedYear % 4;
+}
+
+$genderSql .= " GROUP BY dg.TerritoryName, dc.Gender ORDER BY country, total_customers DESC";
+
+$genderStmt = $conn->prepare($genderSql);
+$genderStmt->execute($genderParams);
+$genderData = $genderStmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Format data gender per negara
+$genderByCountry = [];
+foreach ($genderData as $row) {
+    if (!isset($genderByCountry[$row['country']])) {
+        $genderByCountry[$row['country']] = [
+            'country' => $row['country'],
+            'Male' => 0,
+            'Female' => 0,
+            'total_customers' => 0,
+            'total_sales' => 0
+        ];
+    }
+    $genderByCountry[$row['country']][$row['Gender']] = $row['total_customers'];
+    $genderByCountry[$row['country']]['total_customers'] += $row['total_customers'];
+    $genderByCountry[$row['country']]['total_sales'] += $row['total_sales'];
+}
+
 /* Koordinat negara (hardcode – cukup untuk OLAP) */
 $coords = [
     'United States' => [37.1, -95.7],
@@ -220,7 +263,7 @@ foreach ($rows as $r) {
                                 </div>
                             </div>
                             
-                            <!-- Tabel Data -->
+                            <!-- Tabel Data Customer per Negara -->
                             <div class="row mt-4">
                                 <div class="col-12">
                                     <div class="card">
@@ -275,6 +318,198 @@ foreach ($rows as $r) {
                                                         <?php endif; ?>
                                                     </tbody>
                                                 </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Tabel Data Gender per Negara (TAMBAHAN) -->
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Distribusi Gender per Negara <?= $selectedYear ? " - Tahun $selectedYear" : "(2001-2004)" ?></h5>
+                                            <p class="text-muted mb-0">Analisis pelanggan berdasarkan jenis kelamin</p>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Negara</th>
+                                                            <th>Total Pelanggan</th>
+                                                            <th>Male</th>
+                                                            <th>Female</th>
+                                                            <th>% Male</th>
+                                                            <th>% Female</th>
+                                                            <th>Gender Ratio</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php 
+                                                        $totalGenderCustomers = 0;
+                                                        $totalMale = 0;
+                                                        $totalFemale = 0;
+                                                        
+                                                        foreach ($genderByCountry as $countryData): 
+                                                            $countryTotal = $countryData['total_customers'];
+                                                            $maleCount = $countryData['Male'];
+                                                            $femaleCount = $countryData['Female'];
+                                                            
+                                                            $totalGenderCustomers += $countryTotal;
+                                                            $totalMale += $maleCount;
+                                                            $totalFemale += $femaleCount;
+                                                            
+                                                            $malePercentage = $countryTotal > 0 ? round(($maleCount / $countryTotal) * 100, 1) : 0;
+                                                            $femalePercentage = $countryTotal > 0 ? round(($femaleCount / $countryTotal) * 100, 1) : 0;
+                                                            $genderRatio = $femaleCount > 0 ? round($maleCount / $femaleCount, 1) : 0;
+                                                        ?>
+                                                            <tr>
+                                                                <td><strong><?= $countryData['country'] ?></strong></td>
+                                                                <td><?= number_format($countryTotal, 0, ',', '.') ?></td>
+                                                                <td>
+                                                                    <span class="badge bg-primary"><?= number_format($maleCount, 0, ',', '.') ?></span>
+                                                                    <small class="text-muted">(<?= $malePercentage ?>%)</small>
+                                                                </td>
+                                                                <td>
+                                                                    <span class="badge bg-danger"><?= number_format($femaleCount, 0, ',', '.') ?></span>
+                                                                    <small class="text-muted">(<?= $femalePercentage ?>%)</small>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="progress" style="height: 8px;">
+                                                                        <div class="progress-bar bg-primary" style="width: <?= $malePercentage ?>%"></div>
+                                                                    </div>
+                                                                    <small><?= $malePercentage ?>%</small>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="progress" style="height: 8px;">
+                                                                        <div class="progress-bar bg-danger" style="width: <?= $femalePercentage ?>%"></div>
+                                                                    </div>
+                                                                    <small><?= $femalePercentage ?>%</small>
+                                                                </td>
+                                                                <td>
+                                                                    <?php if ($genderRatio > 0): ?>
+                                                                        <span class="badge <?= $genderRatio > 1.2 ? 'bg-primary' : ($genderRatio < 0.8 ? 'bg-danger' : 'bg-warning') ?>">
+                                                                            <?= $genderRatio ?>:1
+                                                                        </span>
+                                                                        <small class="text-muted">
+                                                                            (M:F)
+                                                                        </small>
+                                                                    <?php else: ?>
+                                                                        <span class="badge bg-secondary">N/A</span>
+                                                                    <?php endif; ?>
+                                                                </td>
+                                                            </tr>
+                                                        <?php endforeach; ?>
+                                                        
+                                                        <!-- Total Row -->
+                                                        <?php 
+                                                        $totalMalePercentage = $totalGenderCustomers > 0 ? round(($totalMale / $totalGenderCustomers) * 100, 1) : 0;
+                                                        $totalFemalePercentage = $totalGenderCustomers > 0 ? round(($totalFemale / $totalGenderCustomers) * 100, 1) : 0;
+                                                        $totalGenderRatio = $totalFemale > 0 ? round($totalMale / $totalFemale, 1) : 0;
+                                                        ?>
+                                                        <tr class="table-active">
+                                                            <td><strong>TOTAL</strong></td>
+                                                            <td><strong><?= number_format($totalGenderCustomers, 0, ',', '.') ?></strong></td>
+                                                            <td>
+                                                                <strong>
+                                                                    <span class="badge bg-primary"><?= number_format($totalMale, 0, ',', '.') ?></span>
+                                                                    <small>(<?= $totalMalePercentage ?>%)</small>
+                                                                </strong>
+                                                            </td>
+                                                            <td>
+                                                                <strong>
+                                                                    <span class="badge bg-danger"><?= number_format($totalFemale, 0, ',', '.') ?></span>
+                                                                    <small>(<?= $totalFemalePercentage ?>%)</small>
+                                                                </strong>
+                                                            </td>
+                                                            <td>
+                                                                <div class="progress" style="height: 8px;">
+                                                                    <div class="progress-bar bg-primary" style="width: <?= $totalMalePercentage ?>%"></div>
+                                                                </div>
+                                                                <strong><?= $totalMalePercentage ?>%</strong>
+                                                            </td>
+                                                            <td>
+                                                                <div class="progress" style="height: 8px;">
+                                                                    <div class="progress-bar bg-danger" style="width: <?= $totalFemalePercentage ?>%"></div>
+                                                                </div>
+                                                                <strong><?= $totalFemalePercentage ?>%</strong>
+                                                            </td>
+                                                            <td>
+                                                                <strong>
+                                                                    <span class="badge <?= $totalGenderRatio > 1.2 ? 'bg-primary' : ($totalGenderRatio < 0.8 ? 'bg-danger' : 'bg-warning') ?>">
+                                                                        <?= $totalGenderRatio ?>:1
+                                                                    </span>
+                                                                    <small class="text-muted">(M:F)</small>
+                                                                </strong>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            
+                                            <!-- Ringkasan Gender -->
+                                            <div class="row mt-4">
+                                                <div class="col-md-6">
+                                                    <div class="card">
+                                                        <div class="card-body text-center">
+                                                            <h6>Distribusi Gender Global</h6>
+                                                            <div class="d-flex justify-content-center align-items-center mt-3">
+                                                                <div class="text-center mx-4">
+                                                                    <div class="display-4 text-primary"><?= $totalMalePercentage ?>%</div>
+                                                                    <small class="text-muted">Male</small>
+                                                                </div>
+                                                                <div class="text-center mx-4">
+                                                                    <div class="display-4 text-danger"><?= $totalFemalePercentage ?>%</div>
+                                                                    <small class="text-muted">Female</small>
+                                                                </div>
+                                                            </div>
+                                                            <div class="progress mt-3" style="height: 20px;">
+                                                                <div class="progress-bar bg-primary" style="width: <?= $totalMalePercentage ?>%">
+                                                                    Male (<?= number_format($totalMale, 0, ',', '.') ?>)
+                                                                </div>
+                                                                <div class="progress-bar bg-danger" style="width: <?= $totalFemalePercentage ?>%">
+                                                                    Female (<?= number_format($totalFemale, 0, ',', '.') ?>)
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="card">
+                                                        <div class="card-body text-center">
+                                                            <h6>Gender Ratio Analysis</h6>
+                                                            <div class="mt-3">
+                                                                <?php if ($totalGenderRatio > 1.2): ?>
+                                                                    <div class="alert alert-primary">
+                                                                        <i class="bi bi-gender-male fs-4"></i>
+                                                                        <h5>Male Dominant</h5>
+                                                                        <p class="mb-0">Lebih banyak pelanggan pria dibanding wanita</p>
+                                                                    </div>
+                                                                <?php elseif ($totalGenderRatio < 0.8): ?>
+                                                                    <div class="alert alert-danger">
+                                                                        <i class="bi bi-gender-female fs-4"></i>
+                                                                        <h5>Female Dominant</h5>
+                                                                        <p class="mb-0">Lebih banyak pelanggan wanita dibanding pria</p>
+                                                                    </div>
+                                                                <?php else: ?>
+                                                                    <div class="alert alert-warning">
+                                                                        <i class="bi bi-gender-ambiguous fs-4"></i>
+                                                                        <h5>Balanced</h5>
+                                                                        <p class="mb-0">Distribusi gender yang seimbang</p>
+                                                                    </div>
+                                                                <?php endif; ?>
+                                                            </div>
+                                                            <div class="mt-2">
+                                                                <small class="text-muted">
+                                                                    Ratio: <?= $totalGenderRatio ?>:1 (Male:Female)<br>
+                                                                    Total Pelanggan: <?= number_format($totalGenderCustomers, 0, ',', '.') ?>
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -488,5 +723,12 @@ foreach ($rows as $r) {
     }
     .custom-tooltip {
         font-weight: normal !important;
+    }
+    .progress {
+        background-color: #e9ecef;
+    }
+    .badge {
+        font-size: 0.85em;
+        padding: 4px 8px;
     }
 </style>
