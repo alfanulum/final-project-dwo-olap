@@ -109,8 +109,7 @@ foreach ($categories as $r) {
       </div>
 
       <!-- REVENUE & KATEGORI -->
-      <div class="row">
-        <!-- KONTRIBUSI REVENUE -->
+      <div class="row mb-4">
         <div class="col-12 col-md-6">
           <div class="card card-animated h-100">
             <div class="card-header">
