@@ -22,7 +22,14 @@ $current_page = basename($_SERVER['PHP_SELF']);
       <li class="sidebar-list <?php echo ($current_page == 'index.php') ? 'active' : ''; ?>">
         <a href="index.php">
           <i class="fas fa-chart-line"></i>
-          <span>Sales Overview</span>
+          <span>Home</span>
+        </a>
+      </li>
+
+      <li class="sidebar-list <?php echo ($current_page == 'sales_person.php') ? 'active' : ''; ?>">
+        <a href="sales_person.php">
+          <i class="fas fa-user"></i>
+          <span>Sales Person</span>
         </a>
       </li>
 
@@ -46,6 +53,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
           <span>OLAP</span>
         </a>
       </li>
+
     </ul>
   </div>
 </div>
