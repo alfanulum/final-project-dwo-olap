@@ -21,14 +21,14 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <ul class="sidebar-links">
       <li class="sidebar-list <?php echo ($current_page == 'index.php') ? 'active' : ''; ?>">
         <a href="index.php">
-          <i class="fas fa-chart-line"></i>
+          <i class="fas fa-home"></i>
           <span>Home</span>
         </a>
       </li>
 
       <li class="sidebar-list <?php echo ($current_page == 'sales_person.php') ? 'active' : ''; ?>">
         <a href="sales_person.php">
-          <i class="fas fa-user"></i>
+          <i class="fas fa-chart-line"></i>
           <span>Sales Person</span>
         </a>
       </li>
